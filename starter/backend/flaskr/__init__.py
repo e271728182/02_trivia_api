@@ -29,6 +29,7 @@ def create_app(test_config=None):
   '''
   @TODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
   '''
+
   cors=CORS(app, resources={"r/*": {"origins": "*"}})
   '''
 
@@ -41,9 +42,9 @@ def create_app(test_config=None):
       response.headers.add("Access-Control-Allow-Headers", "Content-Type,Authorization,true")
       response.headers.add("Access-Control-Allow-Methods", "GET,PATCH,POST,DELETE,OPTIONS")
       return response
-      '''
 
 
+  '''
   @TODO:
   Create an endpoint to handle GET requests
   for all available categories.
@@ -79,6 +80,9 @@ def create_app(test_config=None):
       return (jsonify({'success':True,
       'questions':paginatedQuestions,
       'totalQuestions':len(questions)}),200)
+
+
+
   '''
   @TODO:
   Create an endpoint to DELETE question using a question ID.
@@ -86,8 +90,19 @@ def create_app(test_config=None):
   TEST: When you click the trash icon next to a question, the question will be removed.
   This removal will persist in the database and when you refresh the page.
   '''
+  @app.route('/questions/<int:question_id>',methods=['DELETE'])
+  def delete_question():
+      try:
+          questionToDelete:Question.query.get_or_404(question_id)
+      except:
+          abort(404)
+      return(
+          jsonify({'success':True,
+          'message':'Question deleted'}),200)
 
-  '''
+
+
+'''
   @TODO:
   Create an endpoint to POST a new question,
   which will require the question and answer text,
@@ -97,7 +112,28 @@ def create_app(test_config=None):
   the form will clear and the question will appear at the end of the last page
   of the questions list in the "List" tab.
   '''
+  @app.route('/questions',methods'['POST'])
+  def post_question():
+      data = request.get_json()
+      question = (data.get("question"),)
+      answer = (data.get("answer"),)
+      category = (data.get("category"),)
+      difficulty = data.get("difficulty")
 
+      if not(question and answer and category and difficulty):
+          abort(400)
+      try:
+          question = Question(
+          question=question,
+          answer=answer,
+          category=category,
+          difficulty=difficulty
+            )
+          question.insert()
+      except BaseException:
+          abort(400)
+
+      return (jsonify({"success": True, "question": question.format()}), 200)      
   '''
   @TODO:
   Create a POST endpoint to get questions based on a search term.
