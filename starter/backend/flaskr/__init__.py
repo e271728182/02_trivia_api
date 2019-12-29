@@ -8,14 +8,17 @@ from models import setup_db, Question, Category
 
 QUESTIONS_PER_PAGE = 10
 
-def paginate_questions(request, selection):
+def paginate_request(request, selection,QUESTIONS_PER_PAGE):
+    """
+
+    """
     page = request.args.get("page", 1, type=int)
     start = (page - 1) * QUESTIONS_PER_PAGE
     end = start + QUESTIONS_PER_PAGE
 
-    questions = [question.format() for question in selection]
-    current_questions = questions[start:end]
-    return current_questions
+    allItems = [selectedItem.format() for selectedItem in selection]
+    selected_items = allItems[start:end]
+    return selected_items
 
 
 def create_app(test_config=None):
@@ -66,7 +69,16 @@ def create_app(test_config=None):
   ten questions per page and pagination at the bottom of the screen for three pages.
   Clicking on the page numbers should update the questions.
   '''
+  @app.route('/questions',methods=['GET'])
+  def get_questions():
+      questions=Question.query.all()
+      if len(questions)==0:
+          abort(404)
+      paginatedQuestions = paginate_request(request, selection,QUESTIONS_PER_PAGE)
 
+      return (jsonify({'success':True,
+      'questions':paginatedQuestions,
+      'totalQuestions':len(questions)}),200)
   '''
   @TODO:
   Create an endpoint to DELETE question using a question ID.
