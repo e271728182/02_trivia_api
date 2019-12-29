@@ -115,9 +115,9 @@ def create_app(test_config=None):
   @app.route('/questions',methods'['POST'])
   def post_question():
       data = request.get_json()
-      question = (data.get("question"),)
-      answer = (data.get("answer"),)
-      category = (data.get("category"),)
+      question = data.get("question")
+      answer = data.get("answer")
+      category = data.get("category")
       difficulty = data.get("difficulty")
 
       if not(question and answer and category and difficulty):
@@ -133,7 +133,7 @@ def create_app(test_config=None):
       except BaseException:
           abort(400)
 
-      return (jsonify({"success": True, "question": question.format()}), 200)      
+      return (jsonify({"success": True, "question": question.format()}), 200)
   '''
   @TODO:
   Create a POST endpoint to get questions based on a search term.
