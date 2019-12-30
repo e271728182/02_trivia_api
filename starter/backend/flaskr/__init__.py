@@ -52,7 +52,7 @@ def create_app(test_config=None):
   @app.route('/categories',methods=['GET'])
   def get_categories():
       categories=Category.query.order_by(Category.type).all()
-      if len(cagegories)==0:
+      if len(categories)==0:
           abort(404)
       return jsonify({
             'success': True,
@@ -75,14 +75,36 @@ def create_app(test_config=None):
       questions=Question.query.all()
       if len(questions)==0:
           abort(404)
-      paginatedQuestions = paginate_request(request, selection,QUESTIONS_PER_PAGE)
+      paginatedQuestions = paginate_request(request, questions,QUESTIONS_PER_PAGE)
 
       return (jsonify({'success':True,
       'questions':paginatedQuestions,
       'totalQuestions':len(questions)}),200)
 
 
+  @app.route('/questions',methods=['POST'])
+  def post_question():
 
+      input= request.get_json()
+      question = input.get("question")
+      answer = input.get("answer")
+      category = input.get("category")
+      difficulty = input.get("difficulty")
+
+      if not(question and answer and category and difficulty):
+          abort(400)
+      try:
+          question = Question(
+          question=question,
+          answer=answer,
+          category=category,
+          difficulty=difficulty
+            )
+          question.insert()
+      except BaseException:
+          abort(400)
+
+      return (jsonify({"success": True, "question": question.format()}), 200)
   '''
   @TODO:
   Create an endpoint to DELETE question using a question ID.
@@ -101,49 +123,15 @@ def create_app(test_config=None):
           'message':'Question deleted'}),200)
 
 
-
-'''
-  @TODO:
-  Create an endpoint to POST a new question,
-  which will require the question and answer text,
-  category, and difficulty score.
-
-  TEST: When you submit a question on the "Add" tab,
-  the form will clear and the question will appear at the end of the last page
-  of the questions list in the "List" tab.
-  '''
-  @app.route('/questions',methods'['POST'])
-  def post_question():
-      data = request.get_json()
-      question = data.get("question")
-      answer = data.get("answer")
-      category = data.get("category")
-      difficulty = data.get("difficulty")
-
-      if not(question and answer and category and difficulty):
-          abort(400)
-      try:
-          question = Question(
-          question=question,
-          answer=answer,
-          category=category,
-          difficulty=difficulty
-            )
-          question.insert()
-      except BaseException:
-          abort(400)
-
-      return (jsonify({"success": True, "question": question.format()}), 200)
-  '''
-  @TODO:
-  Create a POST endpoint to get questions based on a search term.
-  It should return any questions for whom the search term
-  is a substring of the question.
-
-  TEST: Search by any phrase. The questions list will update to include
-  only question that include that string within their question.
-  Try using the word "title" to start.
-  '''
+  @app.route('/questions/search',methods=['POST'])
+  def search_question():
+      input=request.get_json()
+      search_term=input.get('search_term',None)
+      if search_term:
+          search_results = Question.query.filter(Question.question.ilike(f"%{search_term}%")).all()
+      else:
+          abort(404)
+      return(jsonify({'success':True}))
 
   '''
   @TODO:
@@ -156,6 +144,25 @@ def create_app(test_config=None):
 
 
   '''
+
+    @TODO:
+    Create an endpoint to POST a new question,
+    which will require the question and answer text,
+    category, and difficulty score.
+
+    TEST: When you submit a question on the "Add" tab,
+    the form will clear and the question will appear at the end of the last page
+    of the questions list in the "List" tab.
+
+    @TODO:
+    Create a POST endpoint to get questions based on a search term.
+    It should return any questions for whom the search term
+    is a substring of the question.
+
+    TEST: Search by any phrase. The questions list will update to include
+    only question that include that string within their question.
+    Try using the word "title" to start.
+
   @TODO:
   Create a POST endpoint to get questions to play the quiz.
   This endpoint should take category and previous question parameters
