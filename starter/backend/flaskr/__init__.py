@@ -126,7 +126,7 @@ def create_app(test_config=None):
   @app.route('/questions/search',methods=['POST'])
   def search_question():
       """
-      search question based on search terms.
+      search question based on partial string match.
       """
       input=request.get_json()
       search_term=input.get('search_term',None)
@@ -150,8 +150,33 @@ def create_app(test_config=None):
           'questions':catQuestions,
           'total_questions':len(catQuestions),
           'current_category':category_id}),200)
+  @app.route('/quizzes')
+  def test():
+      pass
 
+  @app.errorhandler(404)
+  def not_found(error):
+      return (jsonify({'success':False,
+      'error':404,
+      'message':'has not found any item from query'}),404)
 
+  @app.errorhandler(400)
+  def bad_request(error):
+      return (jsonify({'success':False,
+      'error':400,
+      'message':'bad request'}),400)
+
+  @app.errorhandler(405)
+  def method_illegal(error):
+      return (jsonify({'success':False,
+      'error':400,
+      'message':'this method is not allowed'}),405)
+
+  @app.errorhandler(500)
+  def server_error(error):
+      return (jsonify({'success':False,
+      'error':500,
+      'message':'there was an error on the server side'}),500)
 
   '''
  @TODO:
