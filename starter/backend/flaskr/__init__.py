@@ -137,7 +137,7 @@ def create_app(test_config=None):
       return(jsonify({'success':True}))
 
   @app.route('/categories/<int:category_id>/questions', methods=['GET'])
-  def questions_per_categories():
+  def questions_per_categories(category_id):
       """
       returns all questions paginated for a given category
       """
@@ -145,11 +145,12 @@ def create_app(test_config=None):
       if len(catQuestions)==0:
           abort(404)
 
-      paginatedCatQuestions=paginate(request,catQuestions,QUESTIONS_PER_PAGE)
+      paginatedCatQuestions=paginate_request(request,catQuestions,QUESTIONS_PER_PAGE)
       return(jsonify({'success':True,
-          'questions':catQuestions,
+          'questions':paginatedCatQuestions,
           'total_questions':len(catQuestions),
           'current_category':category_id}),200)
+
   @app.route('/quizzes')
   def test():
       pass
