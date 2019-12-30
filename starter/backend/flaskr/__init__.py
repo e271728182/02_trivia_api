@@ -133,18 +133,29 @@ def create_app(test_config=None):
           abort(404)
       return(jsonify({'success':True}))
 
+  @app.route('/categories/<int:category_id>/questions', methods=['GET'])
+  def questions_per_categories():
+      catQuestions = Question.query.filter_by(category=category_id).all()
+      if len(catQuestions)==0:
+          abort(404)
+
+      paginatedCatQuestions=paginate(request,catQuestions,QUESTIONS_PER_PAGE)
+      return(jsonify({'success':True,
+          'questions':catQuestions,
+          'total_questions':len(catQuestions),
+          'current_category':category_id}),200)
+
+
+
+
+
   '''
-  @TODO:
-  Create a GET endpoint to get questions based on category.
+ @TODO:
+ Create a GET endpoint to get questions based on category.
 
-  TEST: In the "List" tab / main screen, clicking on one of the
-  categories in the left column will cause only questions of that
-  category to be shown.
-  '''
-
-
-  '''
-
+ TEST: In the "List" tab / main screen, clicking on one of the
+ categories in the left column will cause only questions of that
+ category to be shown.
     @TODO:
     Create an endpoint to POST a new question,
     which will require the question and answer text,
