@@ -27,13 +27,13 @@ def create_app(test_config=None):
   setup_db(app)
 
   '''
-  @TODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
+  @XTODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
   '''
 
   cors=CORS(app, resources={"r/*": {"origins": "*"}})
   '''
 
-  @TODO: Use the after_request decorator to set Access-Control-Allow
+  @XTODO: Use the after_request decorator to set Access-Control-Allow
   '''
 
 
@@ -46,7 +46,7 @@ def create_app(test_config=None):
 
   '''
   @TODO:
-  Create an endpoint to handle GET requests
+  XCreate an endpoint to handle GET requests
   for all available categories.
   '''
   @app.route('/categories',methods=['GET'])
@@ -60,7 +60,7 @@ def create_app(test_config=None):
         })
   '''
   @TODO:
-  Create an endpoint to handle GET requests for questions,
+  XCreate an endpoint to handle GET requests for questions,
   including pagination (every 10 questions).
   This endpoint should return a list of questions,
   number of total questions, current category, categories.
@@ -107,7 +107,7 @@ def create_app(test_config=None):
       return (jsonify({"success": True, "question": question.format()}), 200)
   '''
   @TODO:
-  Create an endpoint to DELETE question using a question ID.
+  XCreate an endpoint to DELETE question using a question ID.
 
   TEST: When you click the trash icon next to a question, the question will be removed.
   This removal will persist in the database and when you refresh the page.
@@ -125,6 +125,9 @@ def create_app(test_config=None):
 
   @app.route('/questions/search',methods=['POST'])
   def search_question():
+      """
+      search question based on search terms.
+      """
       input=request.get_json()
       search_term=input.get('search_term',None)
       if search_term:
@@ -135,6 +138,9 @@ def create_app(test_config=None):
 
   @app.route('/categories/<int:category_id>/questions', methods=['GET'])
   def questions_per_categories():
+      """
+      returns all questions paginated for a given category
+      """
       catQuestions = Question.query.filter_by(category=category_id).all()
       if len(catQuestions)==0:
           abort(404)
@@ -147,17 +153,15 @@ def create_app(test_config=None):
 
 
 
-
-
   '''
  @TODO:
- Create a GET endpoint to get questions based on category.
+ XCreate a GET endpoint to get questions based on category.
 
  TEST: In the "List" tab / main screen, clicking on one of the
  categories in the left column will cause only questions of that
  category to be shown.
     @TODO:
-    Create an endpoint to POST a new question,
+    XCreate an endpoint to POST a new question,
     which will require the question and answer text,
     category, and difficulty score.
 
@@ -166,7 +170,7 @@ def create_app(test_config=None):
     of the questions list in the "List" tab.
 
     @TODO:
-    Create a POST endpoint to get questions based on a search term.
+    XCreate a POST endpoint to get questions based on a search term.
     It should return any questions for whom the search term
     is a substring of the question.
 
