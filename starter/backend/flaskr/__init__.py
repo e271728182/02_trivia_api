@@ -126,7 +126,7 @@ def create_app(test_config=None):
           'total_questions':len(catQuestions),
           'current_category':category_id}),200)
 
-  @app.route('/quizzes')
+  @app.route('/quizzes',methods=['POST'])
   def get_quiz_questions():
       """
       get questions based on previous category
@@ -141,8 +141,8 @@ def create_app(test_config=None):
       question=Question.query.filter_by(category=quizCategoryId).filter(Question.id.notin_(previousQuestions))
       #select the first question among the filtered ones
       question=question.first().format()
-      return jsonify({'success':True,
-      'question':question})
+      return(jsonify({'success':True,
+      'question':question},200))
   @app.errorhandler(404)
   def not_found(error):
       return (jsonify({'success':False,
