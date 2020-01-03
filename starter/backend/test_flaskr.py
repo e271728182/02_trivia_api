@@ -52,13 +52,14 @@ class TriviaTestCase(unittest.TestCase):
         response = self.client.post(
             "/questions/search",
             json={"searchTerm": "DCcdciwnw&xxs"})
-            
+
         )
 
         input= json.loads(response.data.decode())
         self.assertEqual(response.status_code, 404)
         self.assertEqual(data["message"], 'has not found any item from query')
         self.assertFalse(data["success"])
+
     def test_search_question_possible_substring(self):
         """
         tries to find a string that does  exist. should not return any questions
@@ -72,11 +73,20 @@ class TriviaTestCase(unittest.TestCase):
         input= json.loads(response.data.decode())
         self.assertEqual(response.status_code, 200)
         self.assertTrue(data["success"])
-    def test_get_quiz_questions_impossible_category():
+
+    def test_new_quiz(self):
         """
-        tries to get a question in an impossible category from the
-        get_quiz_questions method
+        tries to start a new quiz round
         """
+        newQuiz = {'previous_questions': [],
+                          'quiz_category': {'type': 'History', 'id': 4}}
+
+        response = self.client().post('/quizzes', json=newQuiz)
+        input = json.loads(response.data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(input['success'], True)
+
     def test_get_question_impossible_category():
         """
         tries to get a question in an impossible category
