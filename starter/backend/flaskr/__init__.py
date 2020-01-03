@@ -26,16 +26,7 @@ def create_app(test_config=None):
   app = Flask(__name__)
   setup_db(app)
 
-  '''
-  @XTODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
-  '''
-
   cors=CORS(app, resources={"r/*": {"origins": "*"}})
-  '''
-
-  @XTODO: Use the after_request decorator to set Access-Control-Allow
-  '''
-
 
   @app.after_request
   def after_request(response):
@@ -43,12 +34,6 @@ def create_app(test_config=None):
       response.headers.add("Access-Control-Allow-Methods", "GET,PATCH,POST,DELETE,OPTIONS")
       return response
 
-
-  '''
-  @TODO:
-  XCreate an endpoint to handle GET requests
-  for all available categories.
-  '''
   @app.route('/categories',methods=['GET'])
   def get_categories():
       categories=Category.query.order_by(Category.type).all()
@@ -58,18 +43,8 @@ def create_app(test_config=None):
             'success': True,
             'categories': {category.id: category.type for category in categories}
         })
-  '''
-  @TODO:
-  XCreate an endpoint to handle GET requests for questions,
-  including pagination (every 10 questions).
-  This endpoint should return a list of questions,
-  number of total questions, current category, categories.
 
-  TEST: At this point, when you start the application
-  you should see questions and categories generated,
-  ten questions per page and pagination at the bottom of the screen for three pages.
-  Clicking on the page numbers should update the questions.
-  '''
+
   @app.route('/questions',methods=['GET'])
   def get_questions():
       questions=Question.query.all()
@@ -84,7 +59,10 @@ def create_app(test_config=None):
 
   @app.route('/questions',methods=['POST'])
   def post_question():
-
+      """
+      get request input for a new question. Will be rejected if any of the input
+      is null or None
+      """
       input= request.get_json()
       question = input.get("question")
       answer = input.get("answer")
@@ -105,15 +83,12 @@ def create_app(test_config=None):
           abort(400)
 
       return (jsonify({"success": True, "question": question.format()}), 200)
-  '''
-  @TODO:
-  XCreate an endpoint to DELETE question using a question ID.
 
-  TEST: When you click the trash icon next to a question, the question will be removed.
-  This removal will persist in the database and when you refresh the page.
-  '''
   @app.route('/questions/<int:question_id>',methods=['DELETE'])
   def delete_question():
+      """
+      deletes a question with a given question_id as input
+      """
       try:
           questionToDelete:Question.query.get_or_404(question_id)
       except:
@@ -152,9 +127,22 @@ def create_app(test_config=None):
           'current_category':category_id}),200)
 
   @app.route('/quizzes')
-  def test():
-      pass
-
+  def get_quiz_questions():
+      """
+      get questions based on previous category
+      """
+      data = request.get_json()
+      previousQuestions = data.get("previous_questions")
+      quizCategory = data.get("quiz_category")
+      quizCategoryId = int(quiz_category["id"])
+      #filter questions over the selected category and eliminate
+      #questions already played in previous rounds which are stored if __name__ == '__main__':
+      # previous_questions list
+      question=Question.query.filter_by(category=quizCategoryId).filter(Question.id.notin_(previousQuestions))
+      #select the first question among the filtered ones
+      question=question.first().format()
+      return jsonify({'success':True,
+      'question':question})
   @app.errorhandler(404)
   def not_found(error):
       return (jsonify({'success':False,
