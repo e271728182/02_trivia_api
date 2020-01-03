@@ -51,8 +51,8 @@ class TriviaTestCase(unittest.TestCase):
         """
         response = self.client.post(
             "/questions/search",
-            data=json.dumps({"searchTerm": "DCcdciwnw&xxs"}),
-            headers=self.headers,
+            json={"searchTerm": "DCcdciwnw&xxs"})
+            
         )
 
         input= json.loads(response.data.decode())
@@ -65,14 +65,18 @@ class TriviaTestCase(unittest.TestCase):
         """
         response = self.client.post(
             "/questions/search",
-            data=json.dumps({"searchTerm": "What"}),
-            headers=self.headers,
+            json=({"searchTerm": "What"})
+
         )
 
         input= json.loads(response.data.decode())
         self.assertEqual(response.status_code, 200)
         self.assertTrue(data["success"])
-
+    def test_get_quiz_questions_impossible_category():
+        """
+        tries to get a question in an impossible category from the
+        get_quiz_questions method
+        """
     def test_get_question_impossible_category():
         """
         tries to get a question in an impossible category
