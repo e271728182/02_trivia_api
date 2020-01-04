@@ -94,6 +94,20 @@ GET '/questions'
 } .  
 Where questions is a list of questions objects in dictionary format
 
+GET '/categories/  
+-Get all the get_categories  
+-Returns: A JSON with the following structure <br/>
+{ 
+  "categories": { 
+    "1": "Science", 
+    "2": "Art",  
+    "3": "Geography",  
+    "4": "History",  
+    "5": "Entertainment",  
+    "6": "Sports" 
+  },  
+  "success": true 
+} 
 
 GET '/categories/<int:category_id>/questions'
 - Get all questions for a given category in a paginated format of 10 questions per page 
