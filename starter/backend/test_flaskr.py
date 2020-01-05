@@ -33,46 +33,42 @@ class TriviaTestCase(unittest.TestCase):
     TODO
     Write at least one test for each test for successful operation and for expected errors.
     """
-    def test_get__all_questions():
+    def test_get__all_questions(self):
         """
         verify that the total questions from query equals the ones from the requests
         verify that the result is a list of items from the query
         """
         numberOfQuestions = Question.query.count()
-        response = self.client.get("/questions")
+        response = self.client().get("/questions")
         input = json.loads(response.data.decode())
         self.assertEqual(response.status_code, 200)
         self.assertTrue(isinstance(input["questions"], list))
-        self.assertEqual(data["total_questions"], numberOfQuestions)
+        self.assertEqual(input["totalQuestions"], numberOfQuestions)
 
     def test_search_question_impossible_substring(self):
         """
         tries to find a string that does not exist. should not return any questions
         """
-        response = self.client.post(
+        response = self.client().post(
             "/questions/search",
-            json={"searchTerm": "DCcdciwnw&xxs"})
+            json={"search_term": "DCcdciwnw&xxs"})
 
-        )
+
 
         input= json.loads(response.data.decode())
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(data["message"], 'has not found any item from query')
-        self.assertFalse(data["success"])
+        self.assertEqual(input["message"], 'has not found any item from query')
+        self.assertFalse(input["success"])
 
     def test_search_question_possible_substring(self):
         """
         tries to find a string that does  exist. should not return any questions
         """
-        response = self.client.post(
-            "/questions/search",
-            json=({"searchTerm": "What"})
-
-        )
+        response = self.client().post("/questions/search",json={'search_term': 'What'})
 
         input= json.loads(response.data.decode())
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(data["success"])
+        self.assertTrue(input["success"],True)
 
     def test_new_quiz(self):
         """
@@ -87,15 +83,15 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(input['success'], True)
 
-    def test_get_question_impossible_category():
+    def test_get_question_impossible_category(self):
         """
         tries to get a question in an impossible category
         should return false and code 404
         """
-        response = self.client.get("categories/99/questions")
+        response = self.client().get("categories/99/questions")
         input= json.loads(response.data.decode())
         self.assertEqual(response.status_code, 404)
-        self.assertFalse(data["success"])
+        self.assertFalse(input["success"])
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
