@@ -104,15 +104,16 @@ def create_app(test_config=None):
       search question based on partial string match.
       """
       input=request.get_json()
-      search_term=input.get('search_term',None)
-      if search_term:
-          search_results = Question.query.filter(Question.question.ilike(f"%{search_term}%")).all()
-      else:
+      search_term=input.get('search_term')
+
+      search_results = Question.query.filter(Question.question.ilike("%{}%".format(search_term))).all()
+      if len(search_results)==0:
           abort(404)
+
       return(jsonify({'success':True,
-      'questions':search_results,
-      total_questions:len(search_results)
-      }))
+      'questions':[question.format() for question in search_results],
+      'total_questions':3
+      }),200)
 
   @app.route('/categories/<int:category_id>/questions', methods=['GET'])
   def questions_per_categories(category_id):
@@ -137,15 +138,16 @@ def create_app(test_config=None):
       data = request.get_json()
       previousQuestions = data.get("previous_questions")
       quizCategory = data.get("quiz_category")
-      quizCategoryId = int(quiz_category["id"])
+      quizCategoryId = int(quizCategory["id"])
       #filter questions over the selected category and eliminate
       #questions already played in previous rounds which are stored if __name__ == '__main__':
       # previous_questions list
       question=Question.query.filter_by(category=quizCategoryId).filter(Question.id.notin_(previousQuestions))
       #select the first question among the filtered ones
       question=question.first().format()
+
       return(jsonify({'success':True,
-      'question':question},200))
+      'question':question}),200)
   @app.errorhandler(404)
   def not_found(error):
       return (jsonify({'success':False,
