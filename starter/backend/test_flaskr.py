@@ -45,6 +45,13 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(isinstance(input["questions"], list))
         self.assertEqual(input["totalQuestions"], numberOfQuestions)
 
+    def test_delete_questions(self):
+        allQuestions=Question.query.all()
+        questionToDelete=allQuestions[0].id
+
+        response = self.client().delete(f'/questions/{questionToDelete}')
+        self.assertEqual(response.status_code, 200)
+
     def test_search_question_impossible_substring(self):
         """
         tries to find a string that does not exist. should not return any questions

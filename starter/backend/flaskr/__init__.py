@@ -85,12 +85,13 @@ def create_app(test_config=None):
       return (jsonify({"success": True, "question": question.format()}), 200)
 
   @app.route('/questions/<int:question_id>',methods=['DELETE'])
-  def delete_question():
+  def delete_question(question_id):
       """
       deletes a question with a given question_id as input
       """
       try:
-          questionToDelete:Question.query.get_or_404(question_id)
+          questionToDelete=Question.query.get(int(question_id))
+          questionToDelete.delete()
       except:
           abort(404)
       return(
