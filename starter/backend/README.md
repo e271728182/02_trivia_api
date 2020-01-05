@@ -134,9 +134,10 @@ DELETE'/questions/<int:question_id>'
 
 ## Testing
 To run the tests, run
-```
-dropdb trivia_test
-createdb trivia_test
-psql trivia_test < trivia.psql
-python test_flaskr.py
-```
+```  
+<br/>
+dropdb trivia_test <br/>
+createdb trivia_test  <br/>
+psql trivia_test < trivia.psql  <br/>
+python test_flaskr.py 
+
