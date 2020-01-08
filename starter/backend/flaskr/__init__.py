@@ -57,7 +57,7 @@ def create_app(test_config=None):
       'questions':paginatedQuestions,
       'totalQuestions':len(questions),
       'categories': {category.id: category.type for category in categories},
-      'current_category': None)},200)
+      'current_category': None}),200)
 
 
   @app.route('/questions',methods=['POST'])
