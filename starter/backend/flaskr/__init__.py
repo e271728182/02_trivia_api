@@ -146,9 +146,10 @@ def create_app(test_config=None):
       #filter questions over the selected category and eliminate
       #questions already played in previous rounds which are stored if __name__ == '__main__':
       # previous_questions list
-      question=Question.query.filter_by(category=quizCategoryId).filter(Question.id.notin_(previousQuestions))
-      #select the first question among the filtered ones
-      question=question.first().format()
+      questions=Question.query.filter_by(category=quizCategoryId).filter(Question.id.notin_(previousQuestions)).all()
+    
+      #select as random question among the filtered ones
+      question=random.choice(questions).format()
 
       return(jsonify({'success':True,
       'question':question}),200)
