@@ -51,10 +51,13 @@ def create_app(test_config=None):
       if len(questions)==0:
           abort(404)
       paginatedQuestions = paginate_request(request, questions,QUESTIONS_PER_PAGE)
-
+      #query categories
+      categories = Category.query.order_by(Category.type).all()
       return (jsonify({'success':True,
       'questions':paginatedQuestions,
-      'totalQuestions':len(questions)}),200)
+      'totalQuestions':len(questions),
+      'categories': {category.id: category.type for category in categories},
+      'current_category': None)},200)
 
 
   @app.route('/questions',methods=['POST'])
